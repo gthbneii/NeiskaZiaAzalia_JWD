@@ -32,16 +32,19 @@
 
                         <div class="mb-3">
                             <label class="form-label">Jenis Skema</label>
-                            <select name="jenis_skema" class="form-select @error('jenis_skema') is-invalid @enderror">
-                                <option value="Okupasi">Okupasi</option>
-                                <option value="Klaster">Klaster</option>
-                                <option value="KKNI">KKNI</option>
+                            <select name="jenis_skema" class="form-select @error('jenis_skema') is-invalid @enderror"
+                                required>
+                                <option value="">-- Pilih Jenis Skema --</option>
+                                <option value="Okupasi" {{ old('jenis_skema') == 'Okupasi' ? 'selected' : '' }}>Okupasi
+                                </option>
+                                <option value="KKNI" {{ old('jenis_skema') == 'KKNI' ? 'selected' : '' }}>KKNI</option>
+                                <option value="Klaster" {{ old('jenis_skema') == 'Klaster' ? 'selected' : '' }}>Klaster
+                                </option>
                             </select>
                             @error('jenis_skema')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-
                         <button type="submit" class="btn btn-primary">Simpan</button>
                         <a href="{{ route('skemas.index') }}" class="btn btn-secondary">Batal</a>
                     </form>

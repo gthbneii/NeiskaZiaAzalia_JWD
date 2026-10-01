@@ -14,7 +14,7 @@ class PesertaController extends Controller
 
         $pesertas = Peserta::with('skema')
             ->when($search, function ($query, $search) {
-                return $query->where('nama_peserta', 'like', "%{$search}%")
+                return $query->where('nama', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%");
             })
             ->latest()
@@ -33,16 +33,24 @@ class PesertaController extends Controller
     {
         $request->validate([
             'skema_id' => 'required|exists:skemas,id',
-            'nama_peserta' => 'required|string|max:255',
+            'nama' => 'required|string|max:255',
             'email' => 'required|email|unique:pesertas,email',
             'no_hp' => 'required|string',
             'alamat' => 'required|string',
             'status_sertifikasi' => 'required',
         ]);
 
-        Peserta::create($request->all());
+        // 2. Simpan data ke database
+        Peserta::create([
+            'skema_id' => $request->skema_id,
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'no_hp' => $request->no_hp,
+            'alamat' => $request->alamat,
+            'status_sertifikasi' => $request->status_sertifikasi,
+        ]);
 
-        return redirect()->route('pesertas.index')->with('success', 'Peserta berhasil ditambahkan !');
+        return redirect()->route('dashboard')->with('success', 'Data peserta berhasil ditambahkan!');
     }
 
     public function show(Peserta $peserta)
@@ -61,14 +69,21 @@ class PesertaController extends Controller
     {
         $request->validate([
             'skema_id' => 'required|exists:skemas,id',
-            'nama_peserta' => 'required|string|max:255',
+            'nama' => 'required|string|max:255', 
             'email' => 'required|email|unique:pesertas,email,' . $peserta->id,
             'no_hp' => 'required|string',
             'alamat' => 'required|string',
             'status_sertifikasi' => 'required',
         ]);
 
-        $peserta->update($request->all());
+        $peserta->update([
+            'skema_id' => $request->skema_id,
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'no_hp' => $request->no_hp,
+            'alamat' => $request->alamat,
+            'status_sertifikasi' => $request->status_sertifikasi,
+        ]);
 
         return redirect()->route('pesertas.index')->with('success', 'Data Peserta berhasil diupdate !');
     }
@@ -76,6 +91,7 @@ class PesertaController extends Controller
     public function destroy(Peserta $peserta)
     {
         $peserta->delete();
-        //return redirect()->route('pesertas.index')->with('success', 'Peserta berhasil dihapus !');
+
+        return redirect()->route('pesertas.index')->with('success', 'Peserta berhasil dihapus !');
     }
 }

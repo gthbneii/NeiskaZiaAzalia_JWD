@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="row justify-content-center mt-5">
+    <div class="row justify-content-center align-items-center vh-100">
         <div class="col-md-4">
             <div class="card shadow border-0">
-                <div class="card-header bg-primary text-white text-center py-3">
+                <div class="card-header text-white text-center py-3" style="background-color: #008080;">
                     <h5 class="mb-0 fw-bold">Login Admin</h5>
                 </div>
                 <div class="card-body p-4">
@@ -25,7 +25,7 @@
                             <label class="form-label">Password</label>
                             <input type="password" name="password" class="form-control" required placeholder="******">
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 fw-bold">Login</button>
+                        <button type="submit" class="btn text-white w-100 fw-bold" style="background-color: #008080;">Login</button>
                     </form>
                 </div>
             </div>
