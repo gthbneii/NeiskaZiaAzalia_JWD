@@ -4,7 +4,7 @@
     <div class="row justify-content-center align-items-center vh-100">
         <div class="col-md-4">
             <div class="card shadow border-0">
-                <div class="card-header text-white text-center py-3" style="background-color: #008080;">
+                <div class="card-header text-white text-center py-3" style="background-color: #43c7d6;">
                     <h5 class="mb-0 fw-bold">Login Admin</h5>
                 </div>
                 <div class="card-body p-4">
@@ -25,7 +25,7 @@
                             <label class="form-label">Password</label>
                             <input type="password" name="password" class="form-control" required placeholder="******">
                         </div>
-                        <button type="submit" class="btn text-white w-100 fw-bold" style="background-color: #008080;">Login</button>
+                        <button type="submit" class="btn text-white w-100 fw-bold" style="background-color: #43c7d6;">Login</button>
                     </form>
                 </div>
             </div>

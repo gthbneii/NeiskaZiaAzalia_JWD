@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
     @auth
-        <nav class="navbar navbar-expand-lg navbar-dark shadow-sm mb-4 py-3" style="background-color: #008080 !important;">
+        <nav class="navbar navbar-expand-lg navbar-dark shadow-sm mb-4 py-3" style="background-color: #43c7d6 !important;">
             <div class="container">
                 <a class="navbar-brand fw-bold fs-4 text-white" href="{{ route('dashboard') }}">App Sertifikasi</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
