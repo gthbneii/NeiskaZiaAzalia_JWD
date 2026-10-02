@@ -37,7 +37,7 @@
                     @forelse($pesertas as $index => $peserta)
                         <tr>
                             <td>{{ $pesertas->firstItem() + $index }}</td>
-                            <td>{{ $peserta->nama_peserta }}</td>
+                            <td>{{ $peserta->nama_lengkap }}</td>
                             <td>{{ $peserta->email }}</td>
                             <td><span class="badge bg-secondary">{{ $peserta->skema->nama_skema ?? '-' }}</span></td>
                             <td>

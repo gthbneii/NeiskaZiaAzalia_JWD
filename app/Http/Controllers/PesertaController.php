@@ -14,7 +14,7 @@ class PesertaController extends Controller
 
         $pesertas = Peserta::with('skema')
             ->when($search, function ($query, $search) {
-                return $query->where('nama', 'like', "%{$search}%")
+                return $query->where('nama_lengkap', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%");
             })
             ->latest()
@@ -22,7 +22,6 @@ class PesertaController extends Controller
 
         return view('pesertas.index', compact('pesertas', 'search'));
     }
-
     public function create()
     {
         $skemas = Skema::all();
@@ -33,24 +32,23 @@ class PesertaController extends Controller
     {
         $request->validate([
             'skema_id' => 'required|exists:skemas,id',
-            'nama' => 'required|string|max:255',
+            'nama_lengkap' => 'required|string|max:255',
             'email' => 'required|email|unique:pesertas,email',
             'no_hp' => 'required|string',
             'alamat' => 'required|string',
             'status_sertifikasi' => 'required',
         ]);
 
-        // 2. Simpan data ke database
         Peserta::create([
             'skema_id' => $request->skema_id,
-            'nama' => $request->nama,
+            'nama_lengkap' => $request->nama_lengkap,
             'email' => $request->email,
             'no_hp' => $request->no_hp,
             'alamat' => $request->alamat,
             'status_sertifikasi' => $request->status_sertifikasi,
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Data peserta berhasil ditambahkan!');
+        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil ditambahkan!');
     }
 
     public function show(Peserta $peserta)
@@ -59,33 +57,29 @@ class PesertaController extends Controller
         return view('pesertas.show', compact('peserta'));
     }
 
-    public function edit(Peserta $peserta)
+    public function edit($id)
     {
+        $peserta = Peserta::findOrFail($id);
         $skemas = Skema::all();
+
         return view('pesertas.edit', compact('peserta', 'skemas'));
     }
 
-    public function update(Request $request, Peserta $peserta)
+    public function update(Request $request, $id)
     {
         $request->validate([
+            'nama_lengkap' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:pesertas,email,' . $id,
             'skema_id' => 'required|exists:skemas,id',
-            'nama' => 'required|string|max:255', 
-            'email' => 'required|email|unique:pesertas,email,' . $peserta->id,
-            'no_hp' => 'required|string',
+            'no_hp' => 'required|string|max:255',
             'alamat' => 'required|string',
-            'status_sertifikasi' => 'required',
+            'status_sertifikasi' => 'required|in:Pending,Lulus,Tidak Lulus',
         ]);
 
-        $peserta->update([
-            'skema_id' => $request->skema_id,
-            'nama' => $request->nama,
-            'email' => $request->email,
-            'no_hp' => $request->no_hp,
-            'alamat' => $request->alamat,
-            'status_sertifikasi' => $request->status_sertifikasi,
-        ]);
+        $peserta = Peserta::findOrFail($id);
+        $peserta->update($request->all());
 
-        return redirect()->route('pesertas.index')->with('success', 'Data Peserta berhasil diupdate !');
+        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil diperbarui!');
     }
 
     public function destroy(Peserta $peserta)

@@ -11,7 +11,7 @@
                     <table class="table table-borderless">
                         <tr>
                             <th width="35%">Nama Peserta</th>
-                            <td>: {{ $peserta->nama_peserta }}</td>
+                            <td>: {{ $peserta->nama_lengkap }}</td>
                         </tr>
                         <tr>
                             <th>Email</th>

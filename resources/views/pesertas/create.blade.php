@@ -5,7 +5,7 @@
         <div class="col-md-8">
             <div class="card shadow border-0">
                 <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 fw-bold">Tambah Data Peserta</h5>
+                    <h5 class="mb-0 fw -bold">Tambah Data Peserta</h5>
                 </div>
                 <div class="card-body p-4">
                     <form action="{{ route('pesertas.store') }}" method="POST">
@@ -28,10 +28,10 @@
 
                         <div class="mb-3">
                             <label class="form-label">Nama Lengkap Peserta</label>
-                            <input type="text" name="nama_peserta"
-                                class="form-control @error('nama_peserta') is-invalid @enderror"
-                                value="{{ old('nama_peserta') }}">
-                            @error('nama_peserta')
+                            <input type="text" name="nama_lengkap"
+                                class="form-control @error('nama_lengkap') is-invalid @enderror"
+                                value="{{ old('nama_lengkap') }}">
+                            @error('nama_lengkap')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
