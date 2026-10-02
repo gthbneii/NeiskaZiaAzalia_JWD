@@ -7,9 +7,6 @@
     <title>App Sertifikasi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-
-<body>
-
     @auth
         <nav class="navbar navbar-expand-lg navbar-dark shadow-sm mb-4 py-3" style="background-color: #008080 !important;">
             <div class="container">
@@ -42,10 +39,23 @@
     @endauth
 
     <div class="container mb-5">
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show shadow-sm mb-3" role="alert">
+                <strong>Berhasil !</strong> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-3" role="alert">
+                <strong>Gagal !</strong> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
         @yield('content')
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+    </body>
 
 </html>

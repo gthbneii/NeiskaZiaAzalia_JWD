@@ -22,6 +22,7 @@ class PesertaController extends Controller
 
         return view('pesertas.index', compact('pesertas', 'search'));
     }
+
     public function create()
     {
         $skemas = Skema::all();
@@ -48,7 +49,7 @@ class PesertaController extends Controller
             'status_sertifikasi' => $request->status_sertifikasi,
         ]);
 
-        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil ditambahkan!');
+        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil ditambahkan !');
     }
 
     public function show(Peserta $peserta)
@@ -79,7 +80,7 @@ class PesertaController extends Controller
         $peserta = Peserta::findOrFail($id);
         $peserta->update($request->all());
 
-        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil diperbarui!');
+        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil diperbarui !');
     }
 
     public function destroy(Peserta $peserta)
