@@ -5,14 +5,15 @@
         <div class="col-md-8">
             <div class="card shadow border-0">
                 <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 fw -bold">Tambah Data Peserta</h5>
+                    <h5 class="mb-0 fw-bold">Tambah Data Peserta</h5>
                 </div>
                 <div class="card-body p-4">
                     <form action="{{ route('pesertas.store') }}" method="POST">
                         @csrf
                         <div class="mb-3">
                             <label class="form-label">Skema Sertifikasi</label>
-                            <select name="skema_id" class="form-select @error('skema_id') is-invalid @enderror">
+                            <select name="skema_id" class="form-select @error('skema_id') is-invalid @enderror"
+                                onfocus="this.size=4;" onblur="this.size=1;" onchange="this.size=1; this.blur();">
                                 <option value="">--- Pilih Skema ---</option>
                                 @foreach ($skemas as $skema)
                                     <option value="{{ $skema->id }}"
@@ -66,9 +67,12 @@
                             <label class="form-label">Status Sertifikasi</label>
                             <select name="status_sertifikasi"
                                 class="form-select @error('status_sertifikasi') is-invalid @enderror">
-                                <option value="Pending">Pending</option>
-                                <option value="Lulus">Lulus</option>
-                                <option value="Tidak Lulus">Tidak Lulus</option>
+                                <option value="Pending" {{ old('status_sertifikasi') == 'Pending' ? 'selected' : '' }}>
+                                    Pending</option>
+                                <option value="Lulus" {{ old('status_sertifikasi') == 'Lulus' ? 'selected' : '' }}>Lulus
+                                </option>
+                                <option value="Tidak Lulus"
+                                    {{ old('status_sertifikasi') == 'Tidak Lulus' ? 'selected' : '' }}>Tidak Lulus</option>
                             </select>
                             @error('status_sertifikasi')
                                 <div class="invalid-feedback">{{ $message }}</div>
