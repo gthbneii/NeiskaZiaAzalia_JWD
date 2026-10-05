@@ -4,58 +4,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App Sertifikasi</title>
+    <title>Aplikasi Data Sertifikasi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
+
+<body class="bg-light">
+
     @auth
-        <nav class="navbar navbar-expand-lg navbar-dark shadow-sm mb-4 py-3" style="background-color: #43c7d6 !important;">
-            <div class="container">
-                <a class="navbar-brand fw-bold fs-4 text-white" href="{{ route('dashboard') }}">App Sertifikasi</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link text-white fs-5 {{ request()->routeIs('dashboard') ? 'active fw-bold' : '' }}"
-                                href="{{ route('dashboard') }}">Dashboard</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white fs-5 {{ request()->routeIs('skemas.*') ? 'active fw-bold' : '' }}"
-                                href="{{ route('skemas.index') }}">Data Skema</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white fs-5 {{ request()->routeIs('pesertas.*') ? 'active fw-bold' : '' }}"
-                                href="{{ route('pesertas.index') }}">Data Peserta</a>
-                        </li>
-                    </ul>
-                    <form action="{{ route('logout') }}" method="POST" class="d-flex">
-                        @csrf
-                        <button type="submit" class="btn btn-outline-light fs-6">Logout</button>
-                    </form>
+        <div class="d-flex" style="min-height: 100vh;">
+            <aside class="text-white p-3 d-flex flex-column shadow"
+                style="width: 280px; background-color: #43c7d6 !important; flex-shrink: 0;">
+                <a href="{{ route('dashboard') }}"
+                    class="d-flex align-items-center justify-content-center text-center mb-3 text-white text-decoration-none">
+                    <span class="fs-2 fw-bold">Aplikasi Data<br>Sertifikasi</span>
+                </a>
+                <hr class="border-white opacity-50">
+
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item mb-2">
+                        <a href="{{ route('dashboard') }}"
+                            class="nav-link text-white fs-5 {{ request()->routeIs('dashboard') ? 'active bg-white fw-bold' : '' }}"
+                            style="{{ request()->routeIs('dashboard') ? 'color: #43c7d6 !important;' : '' }}">
+                            <i class="bi bi-house-door me-2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a href="{{ route('skemas.index') }}"
+                            class="nav-link text-white fs-5 {{ request()->routeIs('skemas.*') ? 'active bg-white fw-bold' : '' }}"
+                            style="{{ request()->routeIs('skemas.*') ? 'color: #43c7d6 !important;' : '' }}">
+                            <i class="bi bi-file-earmark-text me-2"></i> Data Skema
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a href="{{ route('pesertas.index') }}"
+                            class="nav-link text-white fs-5 {{ request()->routeIs('pesertas.*') ? 'active bg-white fw-bold' : '' }}"
+                            style="{{ request()->routeIs('pesertas.*') ? 'color: #43c7d6 !important;' : '' }}">
+                            <i class="bi bi-people me-2"></i> Data Peserta
+                        </a>
+                    </li>
+                </ul>
+
+                <hr class="border-white opacity-50">
+
+                <form action="{{ route('logout') }}" method="POST" class="w-100">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-light w-100 fs-6 btn-logout-hover">
+                        <i class="bi bi-box-arrow-right me-1"></i> Logout
+                    </button>
+
+                    <style>
+                        .btn-logout-hover:hover {
+                            background-color: #dc3545 !important;
+                            border-color: #dc3545 !important;
+                            color: #ffffff !important;
+                        }
+                    </style>
+                </form>
+            </aside>
+
+            <!-- KONTEN UTAMA (SISI KANAN) -->
+            <main class="flex-grow-1 p-4 overflow-auto">
+                <div class="container-fluid">
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show shadow-sm mb-3" role="alert">
+                            <strong>Berhasil !</strong> {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-3" role="alert">
+                            <strong>Gagal !</strong> {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @yield('content')
                 </div>
-            </div>
-        </nav>
+            </main>
+        </div>
+    @else
+        <!-- TAMPILAN JIKA BELUM LOGIN (GUEST/LOGIN PAGE) -->
+        <div class="container py-5">
+            @yield('content')
+        </div>
     @endauth
 
-    <div class="container mb-5">
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show shadow-sm mb-3" role="alert">
-                <strong>Berhasil !</strong> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-3" role="alert">
-                <strong>Gagal !</strong> {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-        @yield('content')
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+</body>
 
 </html>
