@@ -7,16 +7,19 @@ use Illuminate\Http\Request;
 
 class SkemaController extends Controller
 {
-    public function index()
-    {
-        $skemas = Skema::latest()->paginate(10);
-        return view('skemas.index', compact('skemas'));
-    }
+    public function index(Request $request)
+{
+    $search = $request->input('search');
 
-    public function create()
-    {
-        return view('skemas.create');
-    }
+    $skemas = Skema::when($search, function ($query, $search) {
+        return $query->where('nama_skema', 'like', "%{$search}%")
+                     ->orWhere('kode_skema', 'like', "%{$search}%")
+                     ->orWhere('jenis_skema', 'like', "%{$search}%");
+    })
+    ->latest()
+    ->paginate(10);
+    return view('skemas.index', compact('skemas', 'search'));
+}
 
     public function store(Request $request)
     {

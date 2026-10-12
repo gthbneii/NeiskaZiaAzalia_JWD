@@ -163,7 +163,7 @@
     </section>
 
     <!-- bagian bawah footernya -->
-    <br>
+    <footer>
         &copy; {{ date('Y') }} Neiska Zia Azalia_JWD. All rights reserved.
     </footer>
 

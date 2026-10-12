@@ -6,6 +6,20 @@
         <a href="{{ route('skemas.create') }}" class="btn btn-primary">Tambah Skema</a>
     </div>
 
+    <div class="card shadow border-0 mb-3">
+        <div class="card-body">
+            <form action="{{ route('skemas.index') }}" method="GET" class="row g-2">
+                <div class="col-md-10">
+                    <input type="text" name="search" class="form-control" placeholder="Cari skema..."
+                        value="{{ $search ?? request('search') }}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-secondary w-100">Cari</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="card shadow border-0">
         <div class="card-body p-0">
             <table class="table table-striped align-middle mb-0">
@@ -44,5 +58,8 @@
                 </tbody>
             </table>
         </div>
+    </div>
+    <div class="d-flex justify-content-end mt-3">
+        {{ $skemas->appends(['search' => $search])->links() }}
     </div>
 @endsection
