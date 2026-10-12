@@ -7,7 +7,7 @@ use App\Http\Controllers\SkemaController;
 use App\Http\Controllers\PesertaController;
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    return view('welcome');
 });
 
 Route::middleware('guest')->group(function () {
