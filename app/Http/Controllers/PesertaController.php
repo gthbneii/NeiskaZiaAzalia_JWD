@@ -30,7 +30,9 @@ class PesertaController extends Controller
     public function create()
     {
         $skemas = Skema::all();
-        return view('pesertas.create', compact('skemas'));
+        $users = \App\Models\User::where('role', 'user')->get(); 
+
+        return view('pesertas.create', compact('skemas', 'users'));
     }
 
     public function store(Request $request)
