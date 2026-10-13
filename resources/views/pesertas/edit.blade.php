@@ -50,7 +50,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Email (Boleh menggunakan angka)</label>
+                            <label class="form-label">Email</label>
                             <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
                                 value="{{ old('email', $peserta->email) }}" required autocomplete="off">
                             @error('email')
@@ -59,7 +59,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">No. Telepon/HP (Wajib angka, maks 12 digit)</label>
+                            <label class="form-label">No. Telepon/HP</label>
                             <input type="text" name="no_hp" class="form-control @error('no_hp') is-invalid @enderror"
                                 value="{{ old('no_hp', $peserta->no_hp) }}" required maxlength="12"
                                 oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 12);">
