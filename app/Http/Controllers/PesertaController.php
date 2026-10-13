@@ -65,12 +65,13 @@ class PesertaController extends Controller
     {
         $peserta = \App\Models\Peserta::findOrFail($id);
 
-        // Jika bukan admin dan data bukan milik user yang login, tolak akses
         if (auth()->user()->role !== 'admin' && $peserta->user_id !== auth()->id()) {
             abort(403, 'Anda tidak memiliki hak akses untuk mengedit data ini.');
         }
 
-        return view('pesertas.edit', compact('peserta'));
+        $skemas = \App\Models\Skema::all();
+
+        return view('pesertas.edit', compact('peserta', 'skemas'));
     }
 
     public function update(Request $request, $id)
@@ -104,26 +105,48 @@ class PesertaController extends Controller
     {
         $user = auth()->user();
 
+        $peserta = Peserta::where('user_id', $user->id)->first();
+
         $request->validate([
             'skema_id' => 'required|exists:skemas,id',
             'nama_lengkap' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email|max:255|unique:pesertas,email,' . optional($peserta)->id,
             'no_hp' => 'required|string|max:15',
             'alamat' => 'required|string',
         ]);
 
-        \App\Models\Peserta::updateOrCreate(
-            ['user_id' => $user->id],
-            [
+        if ($peserta) {
+            $peserta->update([
                 'skema_id' => $request->skema_id,
                 'nama_lengkap' => $request->nama_lengkap,
                 'email' => $request->email,
                 'no_hp' => $request->no_hp,
                 'alamat' => $request->alamat,
-            ]
-        );
+            ]);
+        } else {
+            $existingPeserta = Peserta::where('email', $request->email)->first();
 
-        // UBAH REDIRECT INI KE DASHBOARD USER:
+            if ($existingPeserta) {
+                $existingPeserta->update([
+                    'user_id' => $user->id,
+                    'skema_id' => $request->skema_id,
+                    'nama_lengkap' => $request->nama_lengkap,
+                    'no_hp' => $request->no_hp,
+                    'alamat' => $request->alamat,
+                ]);
+            } else {
+                Peserta::create([
+                    'user_id' => $user->id,
+                    'skema_id' => $request->skema_id,
+                    'nama_lengkap' => $request->nama_lengkap,
+                    'email' => $request->email,
+                    'no_hp' => $request->no_hp,
+                    'alamat' => $request->alamat,
+                    'status_sertifikasi' => 'Pending',
+                ]);
+            }
+        }
+
         return redirect()->route('user.dashboard')->with('success', 'Data profil/peserta berhasil disimpan!');
     }
 

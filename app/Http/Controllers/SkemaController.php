@@ -24,12 +24,19 @@ class SkemaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'kode_skema' => 'required|unique:skemas,kode_skema',
             'nama_skema' => 'required|string|max:255',
             'jenis_skema' => 'required',
         ]);
 
-        Skema::create($request->all());
+        $latest = Skema::orderBy('id', 'desc')->first();
+        $nextId = $latest ? $latest->id + 1 : 1;
+        $kodeSkema = 'SKM-' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
+
+        Skema::create([
+            'kode_skema' => $kodeSkema,
+            'nama_skema' => $request->nama_skema,
+            'jenis_skema' => $request->jenis_skema,
+        ]);
 
         return redirect()->route('skemas.index')->with('success', 'Skema berhasil ditambahkan !');
     }
