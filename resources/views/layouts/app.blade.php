@@ -63,7 +63,6 @@
                 </form>
             </aside>
 
-            <!-- KONTEN UTAMA (SISI KANAN) -->
             <main class="flex-grow-1 p-4 overflow-auto">
                 <div class="container-fluid">
                     @if (session('success'))
@@ -85,7 +84,6 @@
             </main>
         </div>
     @else
-        <!-- TAMPILAN JIKA BELUM LOGIN (GUEST/LOGIN PAGE) -->
         <div class="container py-5">
             @yield('content')
         </div>

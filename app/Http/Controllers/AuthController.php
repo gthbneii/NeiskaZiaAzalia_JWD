@@ -40,32 +40,41 @@ class AuthController extends Controller
     }
 
     public function login(Request $request)
-{
-    $request->validate([
-        'role' => 'required|in:admin,user',
-        'email' => 'required|email',
-        'password' => 'required',
-    ]);
+    {
+        $request->validate([
+            'role' => 'required|in:admin,user',
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-    $credentials = $request->only('email', 'password');
-
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
-        $user = Auth::user();
-
-        if ($user->role !== $request->role) {
-            Auth::logout();
-            return back()->withErrors(['email' => 'Anda tidak meimiliki akses!']);
+        if ($request->role === 'admin' && $request->email !== 'adm@gmail.com') {
+            return back()->withErrors(['email' => 'Akun tersebut tidak memiliki hak akses sebagai Admin!'])->withInput();
         }
-        if ($user->role === 'admin') {
-            return redirect()->intended('dashboard')->with('success', 'Berhasil Login sebagai Admin !');
-        } else {
-            return redirect()->intended('/user/profile')->with('success', 'Berhasil Login sebagai User!');
+
+        if ($request->role === 'user' && $request->email === 'adm@gmail.com') {
+            return back()->withErrors(['email' => 'Admin harus login melalui opsi Admin!'])->withInput();
         }
+
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            $user = Auth::user();
+
+            if ($user->role !== $request->role) {
+                Auth::logout();
+                return back()->withErrors(['email' => 'Anda tidak memiliki akses!']);
+            }
+
+            if ($user->role === 'admin') {
+                return redirect()->intended('dashboard')->with('success', 'Berhasil Login sebagai Admin !');
+            } else {
+                return redirect()->intended('/user/profile')->with('success', 'Berhasil Login sebagai User!');
+            }
+        }
+
+        return back()->withErrors(['email' => 'Email atau Password salah !']);
     }
-
-    return back()->withErrors(['email' => 'Email atau Password salah !']);
-}
 
     public function logout(Request $request)
     {
