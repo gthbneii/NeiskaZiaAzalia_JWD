@@ -34,6 +34,11 @@ class SkemaController extends Controller
         return redirect()->route('skemas.index')->with('success', 'Skema berhasil ditambahkan !');
     }
 
+    public function create()
+    {
+        return view('skemas.create');
+    }
+
     public function edit(Skema $skema)
     {
         return view('skemas.edit', compact('skema'));

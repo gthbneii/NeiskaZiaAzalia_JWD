@@ -45,7 +45,8 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
+                         <button type="submit" class="btn text-white fw-bold" style="background-color: #43c7d6;">Simpan
+                            Data</button>
                         <a href="{{ route('skemas.index') }}" class="btn btn-secondary">Batal</a>
                     </form>
                 </div>

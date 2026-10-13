@@ -15,7 +15,7 @@
         <div class="d-flex" style="min-height: 100vh;">
             <aside class="text-white p-3 d-flex flex-column shadow"
                 style="width: 280px; background-color: #43c7d6 !important; flex-shrink: 0;">
-                <a href="{{ route('dashboard') }}"
+                <a href="{{ auth()->user()->role === 'admin' ? route('dashboard') : route('user.dashboard') }}"
                     class="d-flex align-items-center justify-content-center text-center mb-3 text-white text-decoration-none">
                     <span class="fs-2 fw-bold">Aplikasi Data<br>Sertifikasi</span>
                 </a>
@@ -23,26 +23,30 @@
 
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item mb-2">
-                        <a href="{{ route('dashboard') }}"
-                            class="nav-link text-white fs-5 {{ request()->routeIs('dashboard') ? 'active bg-white fw-bold' : '' }}"
-                            style="{{ request()->routeIs('dashboard') ? 'color: #43c7d6 !important;' : '' }}">
+                        <a href="{{ auth()->user()->role === 'admin' ? route('dashboard') : route('user.dashboard') }}"
+                            class="nav-link text-white fs-5 {{ request()->routeIs('dashboard') || request()->routeIs('user.dashboard') ? 'active bg-white fw-bold' : '' }}"
+                            style="{{ request()->routeIs('dashboard') || request()->routeIs('user.dashboard') ? 'color: #43c7d6 !important;' : '' }}">
                             <i class="bi bi-house-door me-2"></i> Dashboard
                         </a>
                     </li>
-                    <li class="nav-item mb-2">
-                        <a href="{{ route('skemas.index') }}"
-                            class="nav-link text-white fs-5 {{ request()->routeIs('skemas.*') ? 'active bg-white fw-bold' : '' }}"
-                            style="{{ request()->routeIs('skemas.*') ? 'color: #43c7d6 !important;' : '' }}">
-                            <i class="bi bi-file-earmark-text me-2"></i> Data Skema
-                        </a>
-                    </li>
-                    <li class="nav-item mb-2">
-                        <a href="{{ route('pesertas.index') }}"
-                            class="nav-link text-white fs-5 {{ request()->routeIs('pesertas.*') ? 'active bg-white fw-bold' : '' }}"
-                            style="{{ request()->routeIs('pesertas.*') ? 'color: #43c7d6 !important;' : '' }}">
-                            <i class="bi bi-people me-2"></i> Data Peserta
-                        </a>
-                    </li>
+
+                    {{-- MENU HANYA MUNCUL UNTUK ADMIN --}}
+                    @if (auth()->user()->role === 'admin')
+                        <li class="nav-item mb-2">
+                            <a href="{{ route('skemas.index') }}"
+                                class="nav-link text-white fs-5 {{ request()->routeIs('skemas.*') ? 'active bg-white fw-bold' : '' }}"
+                                style="{{ request()->routeIs('skemas.*') ? 'color: #43c7d6 !important;' : '' }}">
+                                <i class="bi bi-file-earmark-text me-2"></i> Data Skema
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a href="{{ route('pesertas.index') }}"
+                                class="nav-link text-white fs-5 {{ request()->routeIs('pesertas.*') ? 'active bg-white fw-bold' : '' }}"
+                                style="{{ request()->routeIs('pesertas.*') ? 'color: #43c7d6 !important;' : '' }}">
+                                <i class="bi bi-people me-2"></i> Data Peserta
+                            </a>
+                        </li>
+                    @endif
                 </ul>
 
                 <hr class="border-white opacity-50">

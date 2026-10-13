@@ -131,15 +131,6 @@
         <a href="/" class="logo">
             <i class="fa-solid fa-certificate"></i> Portal Sertifikasi
         </a>
-        <div class="nav-links">
-            @if (Route::has('login'))
-                @auth
-                    <a href="{{ url('/dashboard') }}">Dashboard</a>
-                @else
-                    <a href="{{ route('login') }}">Log in</a>
-                @endauth
-            @endif
-        </div>
     </header>
 
     <!-- Hero Section -->

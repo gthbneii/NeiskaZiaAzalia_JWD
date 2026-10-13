@@ -11,7 +11,6 @@ class Skema extends Model
 
     protected $fillable = ['kode_skema', 'nama_skema', 'jenis_skema'];
 
-    // Relasi One-to-Many ke Peserta
     public function pesertas()
     {
         return $this->hasMany(Peserta::class);

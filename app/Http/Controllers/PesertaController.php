@@ -11,15 +11,20 @@ use App\Models\Skema;
 
 class PesertaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        if (auth()->user()->role === 'admin') {
-            $pesertas = Peserta::all();
-        } else {
-            $pesertas = Peserta::where('user_id', auth()->id())->get();
-        }
+        $search = $request->input('search');
 
-        return view('pesertas.index', compact('pesertas'));
+        $pesertas = Peserta::when($search, function ($query, $search) {
+            return $query->where('nama_lengkap', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%");
+        })
+            ->with('skema')
+            ->latest()
+            ->paginate(10);
+
+        // Pastikan 'search' dimasukkan ke dalam compact()
+        return view('pesertas.index', compact('pesertas', 'search'));
     }
 
     public function create()
@@ -45,10 +50,10 @@ class PesertaController extends Controller
             'email' => $request->email,
             'no_hp' => $request->no_hp,
             'alamat' => $request->alamat,
-            'status_sertifikasi' => 'Pending',
+            'status_sertifikasi' => $request->status_sertifikasi ?? 'Pending',
         ]);
 
-        return redirect()->back()->with('success', 'Data profil/peserta berhasil disimpan!');
+        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil ditambahkan!');
     }
     public function show(Peserta $peserta)
     {
@@ -78,7 +83,7 @@ class PesertaController extends Controller
 
         $peserta->update($request->all());
 
-        return redirect()->route('pesertas.index')->with('success', 'Data berhasil diperbarui!');
+        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil diperbarui!');
     }
 
     public function destroy(Peserta $peserta)
@@ -97,16 +102,18 @@ class PesertaController extends Controller
     }
     public function userUpdateProfile(Request $request)
     {
+        $user = auth()->user();
+
         $request->validate([
-            'skema_id' => 'required',
+            'skema_id' => 'required|exists:skemas,id',
             'nama_lengkap' => 'required|string|max:255',
-            'email' => 'required|email',
+            'email' => 'required|email|max:255',
             'no_hp' => 'required|string|max:15',
             'alamat' => 'required|string',
         ]);
 
-        $peserta = \App\Models\Peserta::updateOrCreate(
-            ['user_id' => auth()->id()],
+        \App\Models\Peserta::updateOrCreate(
+            ['user_id' => $user->id],
             [
                 'skema_id' => $request->skema_id,
                 'nama_lengkap' => $request->nama_lengkap,
@@ -116,7 +123,8 @@ class PesertaController extends Controller
             ]
         );
 
-        return redirect()->route('user.profile')->with('success', 'Profil dan data diri Anda berhasil diperbarui!');
+        // UBAH REDIRECT INI KE DASHBOARD USER:
+        return redirect()->route('user.dashboard')->with('success', 'Data profil/peserta berhasil disimpan!');
     }
 
     public function userDashboard()
