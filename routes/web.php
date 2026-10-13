@@ -24,5 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('skemas', SkemaController::class)->except(['show']);
     Route::resource('pesertas', PesertaController::class);
 
-    
+    Route::get('/user/profile', [PesertaController::class, 'userProfile'])->name('user.profile');
+    Route::put('/user/profile/update', [PesertaController::class, 'userUpdateProfile'])->name('user.updateProfile');
+    Route::get('/user/dashboard', [PesertaController::class, 'userDashboard'])->name('user.dashboard');
 });

@@ -63,17 +63,16 @@ class AuthController extends Controller
 
             if ($user->role !== $request->role) {
                 Auth::logout();
-                return back()->withErrors(['email' => 'Anda tidak memiliki akses!']);
+                return redirect()->route('login')->withErrors(['email' => 'Anda tidak memiliki akses dengan role tersebut!'])->withInput();
             }
 
             if ($user->role === 'admin') {
                 return redirect()->intended('dashboard')->with('success', 'Berhasil Login sebagai Admin !');
             } else {
-                return redirect()->intended('/user/profile')->with('success', 'Berhasil Login sebagai User!');
+                return redirect()->intended('/user/dashboard')->with('success', 'Berhasil Login sebagai User!');
             }
         }
-
-        return back()->withErrors(['email' => 'Email atau Password salah !']);
+        return redirect()->route('login')->withErrors(['email' => 'Email atau Password salah !'])->withInput();
     }
 
     public function logout(Request $request)

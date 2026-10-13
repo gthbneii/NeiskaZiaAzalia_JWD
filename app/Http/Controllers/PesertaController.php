@@ -87,4 +87,42 @@ class PesertaController extends Controller
 
         return redirect()->route('pesertas.index')->with('success', 'Peserta berhasil dihapus !');
     }
+
+    public function userProfile()
+    {
+        $peserta = \App\Models\Peserta::where('user_id', auth()->id())->first();
+        $skemas = \App\Models\Skema::all();
+
+        return view('user.profile', compact('peserta', 'skemas'));
+    }
+    public function userUpdateProfile(Request $request)
+    {
+        $request->validate([
+            'skema_id' => 'required',
+            'nama_lengkap' => 'required|string|max:255',
+            'email' => 'required|email',
+            'no_hp' => 'required|string|max:15',
+            'alamat' => 'required|string',
+        ]);
+
+        $peserta = \App\Models\Peserta::updateOrCreate(
+            ['user_id' => auth()->id()],
+            [
+                'skema_id' => $request->skema_id,
+                'nama_lengkap' => $request->nama_lengkap,
+                'email' => $request->email,
+                'no_hp' => $request->no_hp,
+                'alamat' => $request->alamat,
+            ]
+        );
+
+        return redirect()->route('user.profile')->with('success', 'Profil dan data diri Anda berhasil diperbarui!');
+    }
+
+    public function userDashboard()
+    {
+        $peserta = \App\Models\Peserta::where('user_id', auth()->id())->first();
+
+        return view('user.dashboard', compact('peserta'));
+    }
 }
