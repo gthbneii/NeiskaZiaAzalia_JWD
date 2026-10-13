@@ -6,6 +6,19 @@
         <a href="{{ route('skemas.create') }}" class="btn btn-primary">Tambah Skema</a>
     </div>
 
+    @if (session('info'))
+        <div class="alert alert-info alert-dismissible fade show" role="alert" style="font-size: 0.9rem;">
+            <i class="fa-solid fa-circle-info me-1"></i> {{ session('info') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="font-size: 0.9rem;">
+            <i class="fa-solid fa-circle-check me-1"></i> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
     <div class="card shadow border-0 mb-3">
         <div class="card-body">
             <form action="{{ route('skemas.index') }}" method="GET" class="row g-2">

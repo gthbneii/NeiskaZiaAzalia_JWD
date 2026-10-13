@@ -4,8 +4,8 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card shadow border-0">
-                <div class="card-header bg-primary text-white py-3">
-                    <h5 class="mb-0">Detail Peserta Sertifikasi</h5>
+                <div class="card-header text-white py-3" style="background-color: #43c7d6;">
+                    <h5 class="mb-0 fw-bold">Detail Peserta Sertifikasi</h5>
                 </div>
                 <div class="card-body p-4">
                     <table class="table table-borderless">

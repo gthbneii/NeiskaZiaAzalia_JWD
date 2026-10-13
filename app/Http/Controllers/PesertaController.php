@@ -32,26 +32,23 @@ class PesertaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'skema_id' => 'required|exists:skemas,id',
-            'nama_lengkap' => 'required|string|max:255',
-            'email' => 'required|email|unique:pesertas,email',
-            'no_hp' => 'required|string',
+            'skema_id' => 'required',
+            'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
+            'email' => 'required|email|max:255|unique:pesertas,email',
+            'no_hp' => 'required|numeric|digits_between:10,12',
+
             'alamat' => 'required|string',
             'status_sertifikasi' => 'required',
+        ], [
+            'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi, tidak boleh ada angka !.',
+            'no_hp.numeric' => 'No. Telepon/HP wajib berupa angka.',
+            'no_hp.digits_between' => 'No. Telepon/HP harus berdigit antara 10-12 digit.',
         ]);
 
-        Peserta::create([
-            'skema_id' => $request->skema_id,
-            'nama_lengkap' => $request->nama_lengkap,
-            'email' => $request->email,
-            'no_hp' => $request->no_hp,
-            'alamat' => $request->alamat,
-            'status_sertifikasi' => $request->status_sertifikasi,
-        ]);
+        Peserta::create($request->all());
 
         return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil ditambahkan !');
     }
-
     public function show(Peserta $peserta)
     {
         $peserta->load('skema');
@@ -68,19 +65,30 @@ class PesertaController extends Controller
 
     public function update(Request $request, $id)
     {
+        $peserta = Peserta::findOrFail($id);
+
         $request->validate([
-            'nama_lengkap' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:pesertas,email,' . $id,
-            'skema_id' => 'required|exists:skemas,id',
-            'no_hp' => 'required|string|max:255',
+            'skema_id' => 'required',
+            'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
+            'email' => 'required|email|max:255|unique:pesertas,email,' . $peserta->id,
+            'no_hp' => 'required|numeric|digits_between:10,12',
             'alamat' => 'required|string',
-            'status_sertifikasi' => 'required|in:Pending,Lulus,Tidak Lulus',
+            'status_sertifikasi' => 'required',
+        ], [
+            'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi, tidak boleh mengandung angka.',
+            'no_hp.numeric' => 'No. Telepon/HP wajib berupa angka.',
+            'no_hp.digits_between' => 'No. Telepon/HP harus memiliki panjang antara 10 sampai 12 digit.',
         ]);
 
-        $peserta = Peserta::findOrFail($id);
-        $peserta->update($request->all());
+        $peserta->fill($request->all());
 
-        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil diperbarui !');
+        if (!$peserta->isDirty()) {
+            return redirect()->route('pesertas.index')->with('info', 'Tidak ada perubahan data peserta yang dilakukan.');
+        }
+
+        $peserta->save();
+
+        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil diupdate!');
     }
 
     public function destroy(Peserta $peserta)

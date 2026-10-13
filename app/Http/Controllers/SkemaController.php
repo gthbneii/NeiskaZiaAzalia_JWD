@@ -8,18 +8,18 @@ use Illuminate\Http\Request;
 class SkemaController extends Controller
 {
     public function index(Request $request)
-{
-    $search = $request->input('search');
+    {
+        $search = $request->input('search');
 
-    $skemas = Skema::when($search, function ($query, $search) {
-        return $query->where('nama_skema', 'like', "%{$search}%")
-                     ->orWhere('kode_skema', 'like', "%{$search}%")
-                     ->orWhere('jenis_skema', 'like', "%{$search}%");
-    })
-    ->latest()
-    ->paginate(10);
-    return view('skemas.index', compact('skemas', 'search'));
-}
+        $skemas = Skema::when($search, function ($query, $search) {
+            return $query->where('nama_skema', 'like', "%{$search}%")
+                ->orWhere('kode_skema', 'like', "%{$search}%")
+                ->orWhere('jenis_skema', 'like', "%{$search}%");
+        })
+            ->latest()
+            ->paginate(10);
+        return view('skemas.index', compact('skemas', 'search'));
+    }
 
     public function store(Request $request)
     {
@@ -39,17 +39,23 @@ class SkemaController extends Controller
         return view('skemas.edit', compact('skema'));
     }
 
-    public function update(Request $request, Skema $skema)
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'kode_skema' => 'required|unique:skemas,kode_skema,' . $skema->id,
+            'kode_skema' => 'required|string|max:255',
             'nama_skema' => 'required|string|max:255',
             'jenis_skema' => 'required',
         ]);
 
-        $skema->update($request->all());
+        $skema = Skema::findOrFail($id);
+        $skema->fill($request->all());
 
-        return redirect()->route('skemas.index')->with('success', 'Skema berhasil diupdate !');
+        if (!$skema->isDirty()) {
+            return redirect()->route('skemas.index')->with('info', 'Tidak ada perubahan data yang dilakukan.');
+        }
+        $skema->save();
+
+        return redirect()->route('skemas.index')->with('success', 'Skema berhasil diupdate!');
     }
 
     public function destroy(Skema $skema)

@@ -18,14 +18,16 @@
                         @csrf
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" value="{{ old('email') }}" required
-                                placeholder="admin@gmail.com">
+                            <input type="email" name="email" class="form-control" required placeholder="admin@gmail.com"
+                                autocomplete="off">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Password</label>
-                            <input type="password" name="password" class="form-control" required placeholder="******">
+                            <input type="password" name="password" class="form-control" required placeholder="******"
+                                autocomplete="new-password">
                         </div>
-                        <button type="submit" class="btn text-white w-100 fw-bold" style="background-color: #43c7d6;">Login</button>
+                        <button type="submit" class="btn text-white w-100 fw-bold"
+                            style="background-color: #43c7d6;">Login</button>
                     </form>
                 </div>
             </div>
