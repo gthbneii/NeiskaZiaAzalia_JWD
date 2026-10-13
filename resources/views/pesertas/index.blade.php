@@ -42,7 +42,7 @@
                             <td><span class="badge bg-secondary">{{ $peserta->skema->nama_skema ?? '-' }}</span></td>
                             <td>
                                 <span
-                                    class="badge bg-{{ $peserta->status_sertifikasi == 'Lulus'
+                                    class="badge bg-{{ $peserta->status_sertifikasi == 'Kompeten'
                                         ? 'success'
                                         : ($peserta->status_sertifikasi == 'Pending'
                                             ? 'warning'

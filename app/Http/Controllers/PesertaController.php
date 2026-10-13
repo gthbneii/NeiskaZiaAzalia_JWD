@@ -23,14 +23,13 @@ class PesertaController extends Controller
             ->latest()
             ->paginate(10);
 
-        // Pastikan 'search' dimasukkan ke dalam compact()
         return view('pesertas.index', compact('pesertas', 'search'));
     }
 
     public function create()
     {
         $skemas = Skema::all();
-        $users = \App\Models\User::where('role', 'user')->get(); 
+        $users = \App\Models\User::where('role', 'user')->get();
 
         return view('pesertas.create', compact('skemas', 'users'));
     }
@@ -38,25 +37,35 @@ class PesertaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'user_id' => 'required',
             'skema_id' => 'required',
-            'nama_lengkap' => 'required',
-            'email' => 'required|email',
-            'no_hp' => 'required',
-            'alamat' => 'required',
+            'status_sertifikasi' => 'required',
         ]);
 
-        Peserta::create([
-            'user_id' => Auth::id(),
-            'skema_id' => $request->skema_id,
-            'nama_lengkap' => $request->nama_lengkap,
-            'email' => $request->email,
-            'no_hp' => $request->no_hp,
-            'alamat' => $request->alamat,
-            'status_sertifikasi' => $request->status_sertifikasi ?? 'Pending',
-        ]);
+        $peserta = Peserta::where('user_id', $request->user_id)->first();
 
-        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil ditambahkan!');
+        if ($peserta) {
+            $peserta->update([
+                'skema_id' => $request->skema_id,
+                'status_sertifikasi' => $request->status_sertifikasi,
+            ]);
+        } else {
+            $user = \App\Models\User::findOrFail($request->user_id);
+            Peserta::create([
+                'user_id' => $user->id,
+                'skema_id' => $request->skema_id,
+                'nama_lengkap' => $user->name,
+                'email' => $user->email,
+                'no_hp' => $request->no_hp ?? '-',
+                'alamat' => $request->alamat ?? '-',
+                'status_sertifikasi' => $request->status_sertifikasi,
+            ]);
+        }
+
+        // UBAH INI KE pesertas.index AGAR SETELAH MENYIMPAN LANGSUNG KE DAFTAR PESERTA:
+        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil ditambahkan dan disimpan!');
     }
+
     public function show(Peserta $peserta)
     {
         $peserta->load('skema');
@@ -72,8 +81,9 @@ class PesertaController extends Controller
         }
 
         $skemas = \App\Models\Skema::all();
+        $users = \App\Models\User::where('role', 'user')->get(); // Ambil daftar user terdaftar
 
-        return view('pesertas.edit', compact('peserta', 'skemas'));
+        return view('pesertas.edit', compact('peserta', 'skemas', 'users'));
     }
 
     public function update(Request $request, $id)
@@ -84,8 +94,23 @@ class PesertaController extends Controller
             abort(403, 'Anda tidak memiliki hak akses untuk mengubah data ini.');
         }
 
-        $peserta->update($request->all());
+        $request->validate([
+            'user_id' => 'required',
+            'skema_id' => 'required',
+            'status_sertifikasi' => 'required',
+        ]);
 
+        $user = \App\Models\User::findOrFail($request->user_id);
+
+        $peserta->update([
+            'user_id' => $request->user_id,
+            'skema_id' => $request->skema_id,
+            'nama_lengkap' => $user->name,
+            'email' => $user->email,
+            'status_sertifikasi' => $request->status_sertifikasi,
+        ]);
+
+        // UBAH INI JUGA KE pesertas.index:
         return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil diperbarui!');
     }
 
@@ -111,10 +136,14 @@ class PesertaController extends Controller
 
         $request->validate([
             'skema_id' => 'required|exists:skemas,id',
-            'nama_lengkap' => 'required|string|max:255',
+            'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
             'email' => 'required|email|max:255|unique:pesertas,email,' . optional($peserta)->id,
-            'no_hp' => 'required|string|max:15',
+            'no_hp' => 'required|numeric|digits_between:10,12', // Pastikan menggunakan koma (,), bukan tanda hubung (-)
             'alamat' => 'required|string',
+        ], [
+            'nama_lengkap.regex' => 'Nama lengkap tidak boleh mengandung angka atau simbol khusus.',
+            'no_hp.digits_between' => 'Nomor HP harus terdiri dari 10 hingga 12 digit angka.',
+            'no_hp.numeric' => 'Nomor HP harus berupa angka.',
         ]);
 
         if ($peserta) {
