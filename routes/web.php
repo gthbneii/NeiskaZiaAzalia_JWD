@@ -23,4 +23,6 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('skemas', SkemaController::class)->except(['show']);
     Route::resource('pesertas', PesertaController::class);
+
+    
 });

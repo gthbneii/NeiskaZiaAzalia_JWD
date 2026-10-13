@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('pesertas', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('skema_id')->constrained('skemas')->onDelete('cascade');
             $table->string('nama_lengkap');
             $table->string('email')->unique();
