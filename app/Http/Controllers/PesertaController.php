@@ -28,7 +28,7 @@ class PesertaController extends Controller
     public function create()
     {
         $skemas = Skema::all();
-   
+
         $existingUserIds = Peserta::pluck('user_id');
 
         $users = User::where('role', 'user')
