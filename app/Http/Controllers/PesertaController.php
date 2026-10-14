@@ -116,16 +116,16 @@ class PesertaController extends Controller
     }
 
     public function destroy(Peserta $peserta)
-{
-    // Jika ingin akun user-nya ikut terhapus dari database agar benar-benar registrasi dari awal:
-    if ($peserta->user) {
-        $peserta->user->delete();
+    {
+        // Jika ingin akun user-nya ikut terhapus dari database agar benar-benar registrasi dari awal:
+        if ($peserta->user) {
+            $peserta->user->delete();
+        }
+
+        $peserta->delete();
+
+        return redirect()->route('pesertas.index')->with('success', 'Peserta dan akun berhasil dihapus!');
     }
-
-    $peserta->delete();
-
-    return redirect()->route('pesertas.index')->with('success', 'Peserta dan akun berhasil dihapus!');
-}
 
     public function userProfile()
     {
@@ -139,6 +139,7 @@ class PesertaController extends Controller
         $user = auth()->user();
 
         $request->validate([
+            'skema_id' => 'required|exists:skemas,id',
             'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'no_hp' => 'required|numeric|digits_between:10,12',
@@ -154,7 +155,18 @@ class PesertaController extends Controller
             'email' => $request->email,
         ]);
 
-        return redirect()->route('user.dashboard')->with('success', 'Profil berhasil diperbarui!');
+        Peserta::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'skema_id' => $request->skema_id,
+                'nama_lengkap' => $request->nama_lengkap,
+                'email' => $request->email,
+                'no_hp' => $request->no_hp,
+                'alamat' => $request->alamat,
+            ]
+        );
+
+        return redirect()->route('user.dashboard')->with('success', 'Data diri dan profil berhasil disimpan!');
     }
 
     public function userDashboard()
