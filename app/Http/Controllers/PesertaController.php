@@ -28,10 +28,10 @@ class PesertaController extends Controller
     public function create()
     {
         $skemas = Skema::all();
+   
         $existingUserIds = Peserta::pluck('user_id');
 
         $users = User::where('role', 'user')
-            ->whereNotNull('no_hp')
             ->whereNotIn('id', $existingUserIds)
             ->get();
 
@@ -58,7 +58,7 @@ class PesertaController extends Controller
             'status_sertifikasi' => $request->status_sertifikasi,
         ]);
 
-        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil ditambahkan!');
+        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil divalidasi dan ditambahkan!');
     }
 
     public function show(Peserta $peserta)
@@ -101,18 +101,14 @@ class PesertaController extends Controller
             'status_sertifikasi' => $request->status_sertifikasi,
         ]);
 
-        return redirect()->route('pesertas.index')->with('success', 'Data peserta diperbarui!');
+        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil diperbarui!');
     }
 
     public function destroy(Peserta $peserta)
     {
-        if ($peserta->user) {
-            $peserta->user->delete();
-        }
-
         $peserta->delete();
 
-        return redirect()->route('pesertas.index')->with('success', 'Peserta berhasil dihapus!');
+        return redirect()->route('pesertas.index')->with('success', 'Peserta berhasil dihapus dari index!');
     }
 
     public function userProfile()
@@ -153,6 +149,10 @@ class PesertaController extends Controller
     public function userDashboard()
     {
         $user = auth()->user();
-        return view('user.dashboard', compact('user'));
+        $skema = $user->skema_id ? Skema::find($user->skema_id) : null;
+
+        $peserta = Peserta::where('user_id', $user->id)->with('skema')->first();
+
+        return view('user.dashboard', compact('user', 'skema', 'peserta'));
     }
 }
