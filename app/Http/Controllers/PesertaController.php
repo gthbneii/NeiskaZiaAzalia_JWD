@@ -119,7 +119,7 @@ class PesertaController extends Controller
         return view('user.profile', compact('user', 'skemas'));
     }
 
-    public function userUpdateProfile(Request $request)
+   public function userUpdateProfile(Request $request)
     {
         $user = auth()->user();
 
@@ -130,20 +130,18 @@ class PesertaController extends Controller
             'no_hp' => 'required|numeric|digits_between:10,12',
             'alamat' => 'required|string',
         ], [
-            'nama_lengkap.regex' => 'Nama lengkap tidak boleh mengandung angka.',
-            'no_hp.digits_between' => 'Nomor HP harus 10 hingga 12 digit.',
+            'nama_lengkap.regex' => 'Nama lengkap tidak boleh mengandung angka atau simbol khusus.',
+            'no_hp.digits_between' => 'Nomor HP harus terdiri dari 10 hingga 12 digit angka.',
             'no_hp.numeric' => 'Nomor HP harus berupa angka.',
         ]);
 
-        $user->update([
-            'name' => $request->nama_lengkap,
-            'email' => $request->email,
-            'skema_id' => $request->skema_id,
-            'no_hp' => $request->no_hp,
-            'alamat' => $request->alamat,
-        ]);
-
-        return redirect()->route('user.dashboard')->with('success', 'Profil berhasil disimpan!');
+        $user->name = $request->nama_lengkap;
+        $user->email = $request->email;
+        $user->skema_id = $request->skema_id;
+        $user->no_hp = $request->no_hp;
+        $user->alamat = $request->alamat;
+        $user->save();
+        return redirect()->route('user.dashboard')->with('success', 'Data profil berhasil disimpan!');
     }
 
     public function userDashboard()

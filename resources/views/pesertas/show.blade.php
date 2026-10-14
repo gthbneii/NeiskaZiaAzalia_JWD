@@ -33,7 +33,7 @@
                             <th>Status</th>
                             <td>:
                                 <span
-                                    class="badge bg-{{ $peserta->status_sertifikasi == 'Lulus'
+                                    class="badge bg-{{ $peserta->status_sertifikasi == 'Kompeten'
                                         ? 'success'
                                         : ($peserta->status_sertifikasi == 'Pending'
                                             ? 'warning'

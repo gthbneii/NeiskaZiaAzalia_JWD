@@ -19,44 +19,41 @@
                             <div class="alert alert-success">{{ session('success') }}</div>
                         @endif
 
-                        <h5 class="fw-bold mb-2">Halo, {{ Auth::user()->name }}! 👋</h5>
+                        <h5 class="fw-bold mb-2">Halo, {{ $user->name }}! 👋</h5>
                         <p class="text-muted">Selamat datang di portal sertifikasi Anda. Berikut adalah informasi data diri
                             dan status sertifikasi Anda saat ini.</p>
 
                         <hr>
 
-                        @if ($peserta)
+                        {{-- Cek apakah user sudah mengisi no_hp (artinya profil sudah lengkap) --}}
+                        @if ($user->no_hp)
                             <div class="table-responsive">
                                 <table class="table table-borderless">
                                     <tr>
                                         <td class="fw-bold" style="width: 30%;">Nama Lengkap</td>
-                                        <td>: {{ $peserta->nama_lengkap }}</td>
+                                        <td>: {{ $user->name }}</td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">Email</td>
-                                        <td>: {{ $peserta->email }}</td>
+                                        <td>: {{ $user->email }}</td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">No. Handphone</td>
-                                        <td>: {{ $peserta->no_hp }}</td>
+                                        <td>: {{ $user->no_hp }}</td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">Alamat</td>
-                                        <td>: {{ $peserta->alamat }}</td>
+                                        <td>: {{ $user->alamat }}</td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">Skema Sertifikasi</td>
-                                        <td>: {{ $peserta->skema->nama_skema ?? '-' }}</td>
+                                        <td>: {{ $skema->nama_skema ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">Status Sertifikasi</td>
                                         <td>:
-                                            <span
-                                                class="badge
-                                            @if ($peserta->status_sertifikasi == 'Lulus') bg-success
-                                            @elseif($peserta->status_sertifikasi == 'Tidak Lulus') bg-danger
-                                            @else bg-warning text-dark @endif">
-                                                {{ $peserta->status_sertifikasi ?? 'Pending' }}
+                                            <span class="badge bg-warning text-dark">
+                                                {{ $peserta->status_sertifikasi ?? 'Pending (Menunggu Validasi Admin)' }}
                                             </span>
                                         </td>
                                     </tr>
