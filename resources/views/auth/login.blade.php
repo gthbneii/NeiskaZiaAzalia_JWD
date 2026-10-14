@@ -24,8 +24,9 @@
                     <form action="{{ route('login') }}" method="POST">
                         @csrf
                         <div class="mb-3">
-                            <label class="form-label">Login Sebagai</label>
+                            <label class="form-label">Opsi Login</label>
                             <select name="role" class="form-select" required>
+                                <option value="">Login Sebagai</option>
                                 <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>User (Peserta)</option>
                                 <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
                             </select>

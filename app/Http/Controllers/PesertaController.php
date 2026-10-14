@@ -28,8 +28,12 @@ class PesertaController extends Controller
 
     public function create()
     {
-        $skemas = Skema::all();
-        $users = \App\Models\User::where('role', 'user')->get();
+        $skemas = \App\Models\Skema::all();
+        $existingUserIds = \App\Models\Peserta::pluck('user_id');
+
+        $users = \App\Models\User::where('role', 'user')
+            ->whereNotIn('id', $existingUserIds)
+            ->get();
 
         return view('pesertas.create', compact('skemas', 'users'));
     }
@@ -62,7 +66,6 @@ class PesertaController extends Controller
             ]);
         }
 
-        // UBAH INI KE pesertas.index AGAR SETELAH MENYIMPAN LANGSUNG KE DAFTAR PESERTA:
         return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil ditambahkan dan disimpan!');
     }
 
@@ -132,13 +135,10 @@ class PesertaController extends Controller
     {
         $user = auth()->user();
 
-        $peserta = Peserta::where('user_id', $user->id)->first();
-
         $request->validate([
-            'skema_id' => 'required|exists:skemas,id',
             'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
-            'email' => 'required|email|max:255|unique:pesertas,email,' . optional($peserta)->id,
-            'no_hp' => 'required|numeric|digits_between:10,12', // Pastikan menggunakan koma (,), bukan tanda hubung (-)
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'no_hp' => 'required|numeric|digits_between:10,12',
             'alamat' => 'required|string',
         ], [
             'nama_lengkap.regex' => 'Nama lengkap tidak boleh mengandung angka atau simbol khusus.',
@@ -146,39 +146,12 @@ class PesertaController extends Controller
             'no_hp.numeric' => 'Nomor HP harus berupa angka.',
         ]);
 
-        if ($peserta) {
-            $peserta->update([
-                'skema_id' => $request->skema_id,
-                'nama_lengkap' => $request->nama_lengkap,
-                'email' => $request->email,
-                'no_hp' => $request->no_hp,
-                'alamat' => $request->alamat,
-            ]);
-        } else {
-            $existingPeserta = Peserta::where('email', $request->email)->first();
+        $user->update([
+            'name' => $request->nama_lengkap,
+            'email' => $request->email,
+        ]);
 
-            if ($existingPeserta) {
-                $existingPeserta->update([
-                    'user_id' => $user->id,
-                    'skema_id' => $request->skema_id,
-                    'nama_lengkap' => $request->nama_lengkap,
-                    'no_hp' => $request->no_hp,
-                    'alamat' => $request->alamat,
-                ]);
-            } else {
-                Peserta::create([
-                    'user_id' => $user->id,
-                    'skema_id' => $request->skema_id,
-                    'nama_lengkap' => $request->nama_lengkap,
-                    'email' => $request->email,
-                    'no_hp' => $request->no_hp,
-                    'alamat' => $request->alamat,
-                    'status_sertifikasi' => 'Pending',
-                ]);
-            }
-        }
-
-        return redirect()->route('user.dashboard')->with('success', 'Data profil/peserta berhasil disimpan!');
+        return redirect()->route('user.dashboard')->with('success', 'Profil berhasil diperbarui!');
     }
 
     public function userDashboard()

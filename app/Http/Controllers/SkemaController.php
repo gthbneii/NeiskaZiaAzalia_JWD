@@ -24,26 +24,36 @@ class SkemaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'kode_skema' => [
+                'required',
+                'string',
+                'unique:skemas,kode_skema',
+                'regex:/^SKM-\d{3}$/'
+            ],
             'nama_skema' => 'required|string|max:255',
-            'jenis_skema' => 'required',
+        ], [
+            'kode_skema.required' => 'Kode skema wajib diisi.',
+            'kode_skema.unique' => 'Kode skema tersebut sudah terdaftar! Gunakan kode lain.',
+            'kode_skema.regex' => 'Format kode skema harus berawalan SKM- diikuti 3 digit angka (Contoh: SKM-001).',
+            'nama_skema.required' => 'Nama skema wajib diisi.',
         ]);
 
-        $latest = Skema::orderBy('id', 'desc')->first();
-        $nextId = $latest ? $latest->id + 1 : 1;
-        $kodeSkema = 'SKM-' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
+        \App\Models\Skema::create($request->all());
 
-        Skema::create([
-            'kode_skema' => $kodeSkema,
-            'nama_skema' => $request->nama_skema,
-            'jenis_skema' => $request->jenis_skema,
-        ]);
-
-        return redirect()->route('skemas.index')->with('success', 'Skema berhasil ditambahkan !');
+        return redirect()->route('skemas.index')->with('success', 'Skema sertifikasi berhasil ditambahkan!');
     }
 
     public function create()
     {
-        return view('skemas.create');
+        $skemas = \App\Models\Skema::all();
+
+        $existingUserIds = \App\Models\Peserta::pluck('user_id');
+
+        $users = \App\Models\User::where('role', 'user')
+            ->whereNotIn('id', $existingUserIds)
+            ->get();
+
+        return view('pesertas.create', compact('skemas', 'users'));
     }
 
     public function edit(Skema $skema)
@@ -54,7 +64,8 @@ class SkemaController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'kode_skema' => 'required|string|max:255',
+            // Add unique rule ignoring the current record ID
+            'kode_skema' => 'required|string|max:255|unique:skemas,kode_skema,' . $id,
             'nama_skema' => 'required|string|max:255',
             'jenis_skema' => 'required',
         ]);
