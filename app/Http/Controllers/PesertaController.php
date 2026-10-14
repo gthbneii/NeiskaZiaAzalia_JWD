@@ -116,11 +116,16 @@ class PesertaController extends Controller
     }
 
     public function destroy(Peserta $peserta)
-    {
-        $peserta->delete();
-
-        return redirect()->route('pesertas.index')->with('success', 'Peserta berhasil dihapus !');
+{
+    // Jika ingin akun user-nya ikut terhapus dari database agar benar-benar registrasi dari awal:
+    if ($peserta->user) {
+        $peserta->user->delete();
     }
+
+    $peserta->delete();
+
+    return redirect()->route('pesertas.index')->with('success', 'Peserta dan akun berhasil dihapus!');
+}
 
     public function userProfile()
     {
