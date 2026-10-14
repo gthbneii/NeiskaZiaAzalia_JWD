@@ -58,7 +58,7 @@ class PesertaController extends Controller
             'status_sertifikasi' => $request->status_sertifikasi,
         ]);
 
-        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil ditambahkan dan disimpan!');
+        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil ditambahkan!');
     }
 
     public function show(Peserta $peserta)
@@ -72,7 +72,7 @@ class PesertaController extends Controller
         $peserta = Peserta::findOrFail($id);
 
         if (auth()->user()->role !== 'admin' && $peserta->user_id !== auth()->id()) {
-            abort(403, 'Anda tidak memiliki hak akses untuk mengedit data ini.');
+            abort(403, 'Akses ditolak.');
         }
 
         $skemas = Skema::all();
@@ -84,10 +84,6 @@ class PesertaController extends Controller
     public function update(Request $request, $id)
     {
         $peserta = Peserta::findOrFail($id);
-
-        if (auth()->user()->role !== 'admin' && $peserta->user_id !== auth()->id()) {
-            abort(403, 'Anda tidak memiliki hak akses untuk mengubah data ini.');
-        }
 
         $request->validate([
             'user_id' => 'required',
@@ -105,7 +101,7 @@ class PesertaController extends Controller
             'status_sertifikasi' => $request->status_sertifikasi,
         ]);
 
-        return redirect()->route('pesertas.index')->with('success', 'Data peserta berhasil diperbarui!');
+        return redirect()->route('pesertas.index')->with('success', 'Data peserta diperbarui!');
     }
 
     public function destroy(Peserta $peserta)
@@ -116,7 +112,7 @@ class PesertaController extends Controller
 
         $peserta->delete();
 
-        return redirect()->route('pesertas.index')->with('success', 'Peserta dan akun berhasil dihapus!');
+        return redirect()->route('pesertas.index')->with('success', 'Peserta berhasil dihapus!');
     }
 
     public function userProfile()
@@ -138,36 +134,25 @@ class PesertaController extends Controller
             'no_hp' => 'required|numeric|digits_between:10,12',
             'alamat' => 'required|string',
         ], [
-            'nama_lengkap.regex' => 'Nama lengkap tidak boleh mengandung angka atau simbol khusus.',
-            'no_hp.digits_between' => 'Nomor HP harus terdiri dari 10 hingga 12 digit angka.',
+            'nama_lengkap.regex' => 'Nama lengkap tidak boleh mengandung angka.',
+            'no_hp.digits_between' => 'Nomor HP harus 10 hingga 12 digit.',
             'no_hp.numeric' => 'Nomor HP harus berupa angka.',
         ]);
 
         $user->update([
             'name' => $request->nama_lengkap,
             'email' => $request->email,
+            'skema_id' => $request->skema_id,
+            'no_hp' => $request->no_hp,
+            'alamat' => $request->alamat,
         ]);
 
-        Peserta::updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'skema_id' => $request->skema_id,
-                'nama_lengkap' => $request->nama_lengkap,
-                'email' => $request->email,
-                'no_hp' => $request->no_hp,
-                'alamat' => $request->alamat,
-                'status_sertifikasi' => 'Pending',
-            ]
-        );
-
-        return redirect()->route('user.dashboard')->with('success', 'Data profil berhasil disimpan!');
+        return redirect()->route('user.dashboard')->with('success', 'Profil berhasil disimpan!');
     }
 
     public function userDashboard()
     {
         $user = auth()->user();
-        $peserta = Peserta::where('user_id', $user->id)->with('skema')->first();
-
-        return view('user.dashboard', compact('user', 'peserta'));
+        return view('user.dashboard', compact('user'));
     }
 }
